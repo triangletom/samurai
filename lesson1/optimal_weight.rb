@@ -4,4 +4,4 @@ puts "Type your height please:"
 height = gets.chomp.to_i
 weight = height - 110
 #calculating optimal weight and printing results
-puts "Your optimal weight is: #{weight}"
+puts (weight < 0 ? "Your weight is optimal!" : "Optimal for you: #{weight}")
