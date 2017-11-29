@@ -1,5 +1,5 @@
   class Train
-    attr_reader :number
+    attr_reader :number, :carriages
 
     def initialize(number)
       @carriages = []
@@ -47,6 +47,14 @@
     def previous_station
       return unless current_station != @route.stations.first
       @route.stations[@station_index - 1]
+    end
+
+    def add_carriage(c)
+      @carriages.push(c) if c.type == @type && self.stopped?
+    end
+
+    def delete_carriage(c)
+      @carriages.delete(c)
     end
 
     protected

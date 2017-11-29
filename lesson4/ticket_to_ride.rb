@@ -5,27 +5,12 @@ require_relative "cargotrain.rb"
 require_relative "p_train.rb"
 require_relative "cargocarriage.rb"
 require_relative "p_carriage.rb"
+require_relative "carriage.rb"
+class TrainContol
 
-@all_trains = []
-@all_routes = []
-@all_stations = []
-
-def program_menu
-puts "-------------------------"
-puts "Please, choose the action:"
-puts "1. Create station"
-puts "2. Create train"
-puts "3. Create route(add/delete station from route)"
-puts "4. Assign route to train"
-puts "5. Add carriage to train"
-puts "6. Delete carriage from train"
-puts "7. Move train beyound stations"
-puts "8. Print list of stations and trains on them"
-puts "9. Add station to route"
-puts "10. Delete station from route"
-puts "11. Exit"
-puts "-------------------------"
-end
+  @@all_trains = []
+  @@all_routes = []
+  @@all_stations = []
 
 def ticket_to_ride
   puts "Welcome to train control program!"
@@ -49,10 +34,29 @@ def ticket_to_ride
   end
 end
 
+protected
+
+def program_menu
+puts "-------------------------"
+puts "Please, choose the action:"
+puts "1. Create station"
+puts "2. Create train"
+puts "3. Create route(add/delete station from route)"
+puts "4. Assign route to train"
+puts "5. Add carriage to train"
+puts "6. Delete carriage from train"
+puts "7. Move train beyound stations"
+puts "8. Print list of stations and trains on them"
+puts "9. Add station to route"
+puts "10. Delete station from route"
+puts "11. Exit"
+puts "-------------------------"
+end
+
 def create_station
   puts "Name of station?"
-  name = gets.chomp.to_s
-  @all_stations << Station.new(name)
+  name = gets.chomp
+  @@all_stations.push Station.new(name)
 end
 
 def create_train
@@ -61,17 +65,15 @@ def create_train
   puts "1 for Passenger, 2 for Cargo."
   user_input = gets.chomp.to_i
     case user_input
-    when 1 then @all_trains << PassengerTrain.new(number)
-    when 2 then @all_trains << CargoTrain.new(number)
+    when 1 then @@all_trains << PassengerTrain.new(number)
+    when 2 then @@all_trains << CargoTrain.new(number)
     end
 end
-
-
 
 def create_route
   first_station = select_station
   last_station = select_station
-  @all_routes << Route.new(first_station, last_station)
+  @@all_routes << Route.new(first_station, last_station)
 end
 
 def add_to_route
@@ -92,14 +94,17 @@ end
 
 def add_carriage_to_train
   train_by_type = select_train
+  puts "Number of carriage to create?"
+  number = gets.chomp.to_s
   case train_by_type.type
-  when "passenger" then train_by_type.add_carriage(PassengerCarriage.new)
-  when "cargo" then train_by_type.add_carriage(CargoCarriage.new)
+  when "passenger" then train_by_type.add_carriage(PassengerCarriage.new(number))
+  when "cargo" then train_by_type.add_carriage(CargoCarriage.new(number))
   end
 end
 
 def delete_carriage
-  select_train.delete_carriage
+  selected_train = select_train
+  selected_train.delete_carriage(select_carriage(selected_train))
 end
 
 def moves_train
@@ -113,7 +118,7 @@ def moves_train
 end
 
 def list_stations
-  @all_stations.each.with_index(1) do |station, x|
+  @@all_stations.each.with_index(1) do |station, x|
     puts "#{x}. #{station.name}, trains: #{station.trains}"
   end
 end
@@ -121,19 +126,28 @@ end
 def select_train
   puts "Number of train?"
   number = gets.chomp.to_s
-  @all_trains.select {|train| train.number.to_s == number}[0]
+  @@all_trains.select {|train| train.number.to_s == number}[0]
+end
+
+def select_carriage(train)
+  puts "Number of carriage?"
+  number = gets.chomp.to_s
+  train.carriages.select {|carriage| carriage.number.to_s == number}[0]
 end
 
 def select_route
   puts "Route id?"
   route_id = gets.chomp.to_s
-  @all_routes.select {|route| route.route_id.to_s == route_id}[0]
+  @@all_routes.select {|route| route.route_id.to_s == route_id}[0]
 end
 
 def select_station
   puts "Name of station?"
   name = gets.chomp.to_s
-  @all_stations.select {|station| station.name.to_s == name}[0]
+  @@all_stations.select {|station| station.name.to_s == name}[0]
 end
 
-ticket_to_ride
+end
+
+start_programm = TrainContol.new
+start_programm.ticket_to_ride
