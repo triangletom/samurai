@@ -1,10 +1,11 @@
   class Train
-    attr_reader :number, :carriages
+    attr_reader :number, :carriages, :type
 
     def initialize(number)
       @carriages = []
       @number = number
       @speed = 0
+      @type = nil
     end
 
     def speed_up(value=10)
@@ -50,7 +51,7 @@
     end
 
     def add_carriage(c)
-      @carriages.push(c) if c.type == @type && self.stopped?
+      @carriages << c if c.type == @type && self.stopped?
     end
 
     def delete_carriage(c)
